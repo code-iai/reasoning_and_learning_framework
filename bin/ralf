@@ -3,17 +3,47 @@ import rosservice
 import rospy
 from reasoning_and_learning_framework_msgs.srv import *
 
+SERVICE_NAME = 'ralf'
+NODE_NAME = 'ralf'
+
 #import ralf.ralf
+
+s = None
 
 
 def get_grasping_type(req):
     print req.question
 
+    # The MLN inference causes that the service dies sometimes without throwing an exception.
+    # However until the real cause will be found out, a reboot of the service fixes it.
+    if __is_service_running__():
+        try:
+            __start_service__()
+        except:
+            print''
+
     return GetAnswerResponse('Got it')
 
-    
-if __name__ == '__main__':
-    rospy.init_node('ralf')
-    s = rospy.Service('ralf', GetAnswer, get_grasping_type)
+
+def __is_service_running__():
+    return '/{}'.format(SERVICE_NAME) not in rosservice.get_service_list()
+
+
+def __start_service__():
+    global s
+    s = rospy.Service(SERVICE_NAME, GetAnswer, get_grasping_type)
+
+
+def start_ralf_server():
+    rospy.init_node(NODE_NAME)
+    __start_service__()
     print "Waiting for questions"
     rospy.spin()
+    
+
+if __name__ == '__main__':
+    start_ralf_server()
+
+
+
+
