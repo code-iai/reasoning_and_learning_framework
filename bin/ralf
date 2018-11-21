@@ -1,0 +1,19 @@
+#! /usr/bin/env python
+import rosservice
+import rospy
+from reasoning_and_learning_framework_msgs.srv import *
+
+#import ralf.ralf
+
+
+def get_grasping_type(req):
+    print req.question
+
+    return GetAnswerResponse('Got it')
+
+    
+if __name__ == '__main__':
+    rospy.init_node('ralf')
+    s = rospy.Service('ralf', GetAnswer, get_grasping_type)
+    print "Waiting for questions"
+    rospy.spin()
