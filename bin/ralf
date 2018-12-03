@@ -2,10 +2,11 @@
 import rosservice
 import rospy
 from reasoning_and_learning_framework_msgs.srv import *
+from json_prolog_msgs.srv import *
 from ralf import ralf
 
-SERVICE_NAME_QUERY_ID = 'ralf/query_id'
-SERVICE_NAME_SOLUTION = 'ralf/query_solution'
+SERVICE_NAME_QUERY_ID = 'json_prolog/simple_query'
+SERVICE_NAME_SOLUTION = 'json_prolog/next_solution'
 NODE_NAME = 'ralf'
 
 service_query_id = None
@@ -15,33 +16,45 @@ service_query_solution = None
 def call_service_query_id(req):
     print 'Query Id'
 
-    answer = ralf.answer_query(req.question)
+    query_id = req.id
+    mode = req.mode
+    query = req.query
 
-    # The MLN inference causes that the service dies sometimes without throwing an exception.
-    # However until the real cause will be found out, a reboot of the service fixes it.
-    if __is_service_running__():
-        try:
-            __start_service__()
-        except:
-            print''
+    print query_id
+    print mode
+    print query
 
-    return GetAnswerResponse(answer)
+    # answer = ralf.answer_query(req.question)
+    #
+    # # The MLN inference causes that the service dies sometimes without throwing an exception.
+    # # However until the real cause will be found out, a reboot of the service fixes it.
+    # if __is_service_running__():
+    #     try:
+    #         __start_service__()
+    #     except:
+    #         print''
+
+    return PrologQueryResponse(True, '')
 
 
 def call_service_query_solution(req):
     print 'Query Solution'
 
-    answer = ralf.answer_query(req.question)
+    id = req.id
 
-    # The MLN inference causes that the service dies sometimes without throwing an exception.
-    # However until the real cause will be found out, a reboot of the service fixes it.
-    if __is_service_running__():
-        try:
-            __start_service__()
-        except:
-            print''
+    print id
 
-    return GetAnswerResponse(answer)
+    # answer = ralf.answer_query(req.question)
+    #
+    # # The MLN inference causes that the service dies sometimes without throwing an exception.
+    # # However until the real cause will be found out, a reboot of the service fixes it.
+    # if __is_service_running__():
+    #     try:
+    #         __start_service__()
+    #     except:
+    #         print''
+
+    return PrologNextSolutionResponse(2, "{\"Matrix\":[[1,1,1],[2,2,2],[3,3,3]]}")
 
 
 def __is_service_running__():
@@ -50,10 +63,10 @@ def __is_service_running__():
 
 def __start_service__():
     global service_query_id
-    service_query_id = rospy.Service(SERVICE_NAME_QUERY_ID, GetAnswer, call_service_query_id)
+    service_query_id = rospy.Service(SERVICE_NAME_QUERY_ID, PrologQuery, call_service_query_id)
 
     global service_query_solution
-    service_query_id = rospy.Service(SERVICE_NAME_SOLUTION, GetAnswer, call_service_query_solution)
+    service_query_id = rospy.Service(SERVICE_NAME_SOLUTION, PrologNextSolution, call_service_query_solution)
 
 
 def start_ralf_server():
