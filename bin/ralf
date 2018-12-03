@@ -54,7 +54,8 @@ def call_service_query_solution(req):
     #     except:
     #         print''
 
-    return PrologNextSolutionResponse(2, "{\"Matrix\":[[1,1,1],[2,2,2],[3,3,3]]}")
+    solution = "{{\"Matrix\":{}}}".format([[1,1,1],[2,2,2],[3,3,3]])
+    return PrologNextSolutionResponse(2, solution)
 
 
 def __is_service_running__():
