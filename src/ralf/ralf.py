@@ -22,5 +22,5 @@ from grasping import type as grasping_type
 
 
 def answer_query(query):
-    if query == 'grasping':
+    if query.predicate == 'designator_costmap':
         return grasping_type.get_most_probable('front', 'bottom', 'cup.n.01')

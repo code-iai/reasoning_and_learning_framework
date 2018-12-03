@@ -14,44 +14,31 @@ NODE_NAME = 'ralf'
 service_query_id = None
 service_query_solution = None
 
+queries = {}
+
 
 def call_service_query_id(req):
-    print 'Query Id'
     query = Query(req.id, req.mode, req.query)
-
-
-    # answer = ralf.answer_query(req.question)
-    #
-    # # The MLN inference causes that the service dies sometimes without throwing an exception.
-    # # However until the real cause will be found out, a reboot of the service fixes it.
-    # if __is_service_running__():
-    #     try:
-    #         __start_service__()
-    #     except:
-    #         print''
+    queries[query.id] = query
 
     return PrologQueryResponse(True, '')
 
 
 def call_service_query_solution(req):
-    print 'Query Solution'
+    query = queries.get(req.id, None)
 
-    id = req.id
+    answer = ralf.answer_query(query)
 
-    print id
-
-    # answer = ralf.answer_query(req.question)
-    #
-    # # The MLN inference causes that the service dies sometimes without throwing an exception.
-    # # However until the real cause will be found out, a reboot of the service fixes it.
-    # if __is_service_running__():
-    #     try:
-    #         __start_service__()
-    #     except:
-    #         print''
+    # The MLN inference causes that the service dies sometimes without throwing an exception.
+    # However until the real cause will be found out, a reboot of the service fixes it.
+    if __is_service_running__():
+        try:
+            __start_service__()
+        except:
+            print''
 
     solution = "{{\"Matrix\":{}}}".format([[1,1,1],[2,2,2],[3,3,3]])
-    return PrologNextSolutionResponse(2, solution)
+    return PrologNextSolutionResponse(2, answer)
 
 
 def __is_service_running__():
