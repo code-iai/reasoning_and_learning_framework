@@ -8,7 +8,7 @@ class Query:
         self.id = id
         self._mode = mode
         self._query_text =  query_text
-        self.predicate, self._parameters = self._parse_query()
+        self.predicate, self.parameters = self._parse_query()
 
     def _parse_query(self):
         matches = re.finditer(regex, self._query_text)
