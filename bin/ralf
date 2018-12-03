@@ -3,6 +3,8 @@ import rosservice
 import rospy
 from reasoning_and_learning_framework_msgs.srv import *
 from json_prolog_msgs.srv import *
+
+from query.query import Query
 from ralf import ralf
 
 SERVICE_NAME_QUERY_ID = 'json_prolog/simple_query'
@@ -15,14 +17,8 @@ service_query_solution = None
 
 def call_service_query_id(req):
     print 'Query Id'
+    query = Query(req.id, req.mode, req.query)
 
-    query_id = req.id
-    mode = req.mode
-    query = req.query
-
-    print query_id
-    print mode
-    print query
 
     # answer = ralf.answer_query(req.question)
     #
