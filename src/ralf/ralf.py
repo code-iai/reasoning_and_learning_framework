@@ -19,22 +19,42 @@
 # SOFTWARE.
 
 from grasping import type as grasping_type, utils
+from grasping.position import PositionGrid
 
 _cram_to_word_net_object_ = {'BOWL':'bowl.n.01', 'CUP': 'cup.n.01'}
+
+best_grasping_types = []
+best_position_grid = PositionGrid()
 
 
 def answer_query(query):
     if query.predicate == 'performing_action':
         if query.parameters[0] == 'FETCHING':
+            positionGrid = PositionGrid()
             pose = eval(query.parameters[3])
+            arm = query.parameters[-1]
             object_type = _cram_to_word_net_object_[query.parameters[1]]
+
             transformation_matrix = utils.get_transform_matrix(pose[2], pose[3])
+
             _, bottom_face = utils.calculate_object_faces(transformation_matrix)
 
             robot_faces = utils.get_possible_robot_faces(bottom_face)
 
             for robot_face in robot_faces:
-               print grasping_type.get_storted_list_of_grasping_types_based_on_probability(
+                grasping_results = grasping_type.get_storted_list_of_grasping_types_based_on_probability(
                    robot_face, bottom_face, object_type)
+
+                best_grasping_types.append(grasping_results)
+
+                grasping_result = grasping_results[0]
+                positionGrid.add_evidences(object_type, grasping_result, robot_face, bottom_face, arm)
+
+            global best_position_grid
+            best_position_grid = positionGrid
+
+
+
+
 
     return 'test'
