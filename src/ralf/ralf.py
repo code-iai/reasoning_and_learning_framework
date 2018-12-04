@@ -20,12 +20,14 @@
 
 from grasping import type as grasping_type, utils
 
+_cram_to_word_net_object_ = {'BOWL':'bowl.n.01', 'CUP': 'cup.n.01'}
 
 def answer_query(query):
-    if query.predicate == 'designator_costmap':
-        return grasping_type.get_most_probable('front', 'bottom', 'cup.n.01')
     if query.predicate == 'performing_action':
         if query.parameters[0] == 'FETCHING':
             pose = eval(query.parameters[3])
+            object_type = _cram_to_word_net_object_[query.parameters[3]]
             transformation_matrix = utils.get_transform_matrix(pose[2], pose[3])
             robot_face, bottom_face = utils.calculate_object_faces(transformation_matrix)
+
+            return grasping_type.get_most_probable('front', 'bottom', object_type)

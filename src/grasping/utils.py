@@ -25,17 +25,17 @@ def _calculate_vector_face(robot_vector):
 
     if dimension == 0:
         if value > 0.:
-            return 'front'
+            return ':FRONT'
         else:
-            return 'back'
+            return ':BACK'
     elif dimension == 1:
         if value > 0.:
-            return 'left-side'
+            return ':LEFT-SIDE'
         else:
-            return 'right-side'
+            return ':RIGHT-SIDE'
     else:
         if value > 0.:
-            return 'top'
+            return ':TOP'
         else:
-            return 'bottom'
+            return ':BOTTOM'
 
