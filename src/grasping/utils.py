@@ -39,3 +39,23 @@ def _calculate_vector_face(robot_vector):
         else:
             return ':BOTTOM'
 
+
+def get_possible_robot_faces(bottom_face):
+    possible_robot_faces = [':FRONT', ':BACK', ':LEFT-SIDE', ':RIGHT-SIDE', ':TOP', ':BOTTOM']
+
+    if bottom_face == ':BOTTOM' or bottom_face == ':TOP':
+        possible_robot_faces.remove(':BOTTOM')
+        possible_robot_faces.remove(':TOP')
+
+    elif bottom_face == ':FRONT' or bottom_face == ':BACK':
+        possible_robot_faces.remove(':FRONT')
+        possible_robot_faces.remove(':BACK')
+
+    elif bottom_face == ':RIGHT-SIDE' or bottom_face == ':LEFT-SIDE':
+        possible_robot_faces.remove(':RIGHT-SIDE')
+        possible_robot_faces.remove(':LEFT-SIDE')
+
+
+    return possible_robot_faces
+
+

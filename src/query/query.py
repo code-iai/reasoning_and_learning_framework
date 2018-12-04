@@ -29,10 +29,10 @@ def _parse_parameters(matched_parameter_group):
         if brackets_stack == 0:
             list_parameter.append(parameter)
 
-            parameters.append(','.join(list_parameter))
+            parameters.append(','.join(list_parameter).strip())
 
             list_parameter = []
         else:
-            list_parameter.append(parameter)
+            list_parameter.append(parameter.strip())
 
     return parameters

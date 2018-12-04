@@ -25,3 +25,8 @@ def get_most_probable(facing_robot, bottom_face, object_type):
     inference = Inference(facing_robot, bottom_face, object_type)
     return inference.get_most_probable_result()
 
+
+def get_storted_list_of_grasping_types_based_on_probability(facing_robot, bottom_face, object_type):
+    inference = Inference(facing_robot, bottom_face, object_type)
+    return inference.get_storted_list_of_grasping_types_based_on_probability()
+
