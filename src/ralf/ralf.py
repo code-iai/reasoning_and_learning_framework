@@ -20,6 +20,7 @@
 
 from grasping import type as grasping_type, utils
 from grasping.position import PositionGrid
+from grasping.utils import get_object_robot_translation
 
 _cram_to_word_net_object_ = {'BOWL':'bowl.n.01', 'CUP': 'cup.n.01'}
 
@@ -39,6 +40,9 @@ def answer_query(query):
             return reachable_costmap(query)
 
         return ''
+
+    elif query.predicate == 'object_type_grasps':
+        return object_type_grasps(query)
 
     return ''
 
@@ -74,3 +78,15 @@ def reachable_costmap(query):
     grid_text = str(best_position_grid.get_grid())
     grid_text = grid_text.replace('\n', ',')
     return "{{\"{}\":{}}}".format(query.parameters[5], grid_text)
+
+
+def object_type_grasps(query):
+    pose = eval(query.parameters[2])
+    object_robot_translation = get_object_robot_translation(pose[2], pose[3])
+    x = object_robot_translation[0]
+    y = object_robot_translation[1]
+
+    predictor_index = best_position_grid.get_predictor_index(x,y)
+    grasping_result = best_grasping_types[predictor_index]
+
+    return "{{\"{}\":{}}}".format(query.parameters[-1], grasping_result)

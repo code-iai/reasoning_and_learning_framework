@@ -11,6 +11,12 @@ def calculate_object_faces(robot_to_object_transform):
     return _calculate_vector_face(robot_negative_x_vector), _calculate_vector_face(robot_negative_z_vector)
 
 
+def get_object_robot_translation(robot_object_translation, robot_object_quaternion):
+    transform_matrix = get_transform_matrix(robot_object_translation, robot_object_quaternion)
+    object_to_robot_transform = tf.inverse_matrix(transform_matrix)
+    return tf.translation_from_matrix(object_to_robot_transform)
+
+
 def get_transform_matrix(translation, quaternion):
     translation_matrix = tf.translation_matrix(translation)
     quaternion_matrix = tf.quaternion_matrix(quaternion)

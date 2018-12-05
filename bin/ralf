@@ -21,6 +21,14 @@ def call_service_query_id(req):
     query = Query(req.id, req.mode, req.query)
     queries[query.id] = query
 
+    # The MLN inference causes that the service dies sometimes without throwing an exception.
+    # However until the real cause will be found out, a reboot of the service fixes it.
+    if __is_service_running__():
+        try:
+            __start_service__()
+        except:
+            print''
+
     return PrologQueryResponse(True, '')
 
 
@@ -41,7 +49,8 @@ def call_service_query_solution(req):
 
 
 def __is_service_running__():
-    return '/{}'.format(SERVICE_NAME_QUERY_ID) not in rosservice.get_service_list()
+    return '/{}'.format(SERVICE_NAME_QUERY_ID) not in rosservice.get_service_list() \
+           or '/{}'.format(SERVICE_NAME_SOLUTION) not in rosservice.get_service_list()
 
 
 def __start_service__():

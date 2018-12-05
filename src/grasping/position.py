@@ -44,6 +44,7 @@ class PositionGrid(object):
         index = 0
         for i in range(0, len(self._model.predictors)):
             predictor = self._model.predictors[i]
+            print predictor._file_name
             if (predictor._min_x <= x <= predictor._max_x) and (predictor._min_y <= y <= predictor._max_y):
                 index = i
                 break
