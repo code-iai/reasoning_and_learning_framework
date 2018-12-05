@@ -45,7 +45,7 @@ def call_service_query_solution(req):
         except:
             print''
 
-    return PrologNextSolutionResponse(2, answer)
+    return PrologNextSolutionResponse(3, answer)
 
 
 def __is_service_running__():

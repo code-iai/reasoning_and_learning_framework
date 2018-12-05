@@ -33,18 +33,18 @@ def answer_query(query):
         if query.parameters[0] == 'FETCHING':
             return performing_fetching(query)
 
-        return ''
+        return '{}'
 
     elif query.predicate == 'designator_costmap':
         if query.parameters[0] == 'REACHABLE':
             return reachable_costmap(query)
 
-        return ''
+        return '{}'
 
     elif query.predicate == 'object_type_grasps':
         return object_type_grasps(query)
 
-    return ''
+    return '{}'
 
 
 def performing_fetching(query):
@@ -71,13 +71,21 @@ def performing_fetching(query):
     global best_position_grid
     best_position_grid = position_grid
 
-    return ''
+    return '{}'
 
 
 def reachable_costmap(query):
-    grid_text = str(best_position_grid.get_grid())
+    grid_text = _get_costmap_as_text()
     grid_text = grid_text.replace('\n', ',')
     return "{{\"{}\":{}}}".format(query.parameters[5], grid_text)
+
+
+def _get_costmap_as_text():
+    result = []
+    for row in best_position_grid.get_grid():
+        row_text = map(str, row)
+        result.append(row_text)
+    return str(result).replace("'", '')
 
 
 def object_type_grasps(query):

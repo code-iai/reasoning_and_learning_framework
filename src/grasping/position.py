@@ -30,7 +30,7 @@ class PositionGrid(object):
         bottom_face = bottom_face.replace(':', '')
         robot_face = robot_face.replace(':', '')
 
-        if arm == 'left':
+        if arm == 'LEFT':
             arm = 'pr2_left_arm'
         else:
             arm = 'pr2_right_arm'
