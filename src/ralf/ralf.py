@@ -100,4 +100,4 @@ def object_type_grasps(query):
     grasping_result = map(lambda grasp: grasp.lower(), grasping_result)
     result = "{{\"{}\":{}}}".format(query.parameters[-1], grasping_result)
 
-    return result.replace("'", '')
+    return result.replace("'", '"')
