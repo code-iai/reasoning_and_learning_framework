@@ -27,6 +27,14 @@ class PositionGrid(object):
 
     def add_evidences(self, *evidences):
         object_type, grasping_type, robot_face, bottom_face, arm = evidences
+        bottom_face = bottom_face.replace(':', '')
+        robot_face = robot_face.replace(':', '')
+
+        if arm == 'left':
+            arm = 'pr2_left_arm'
+        else:
+            arm = 'pr2_right_arm'
+
         self._model.add_predictor(object_type, grasping_type, robot_face, bottom_face, arm)
 
     def get_grid(self):
