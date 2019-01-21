@@ -22,17 +22,23 @@ from grasping import type as grasping_type, utils
 from grasping.position import PositionGrid
 from grasping.utils import get_object_robot_translation
 
-_cram_to_word_net_object_ = {'bowl':'bowl.n.01', 'cup': 'cup.n.01'}
+_cram_to_word_net_object_ = {'bowl':'bowl.n.01', 'cup': 'cup.n.01', 'spoon': 'spoon.n.01'}
+
+
+ARM = 'ARM'
+GRASPING_TYPE = 'GRASPING_TYPE'
 
 best_grasping_types = []
 best_position_grid = PositionGrid()
+fetching_solutions = {}
 
 
 def answer_query(query):
     if query.predicate == 'performing_action':
         if query.parameters[0] == 'fetching':
             return performing_fetching(query)
-
+        elif query.parameters[0] == 'delivering':
+            return performing_delivering(query)
         return '{}'
 
     elif query.predicate == 'designator_costmap':
@@ -47,10 +53,31 @@ def answer_query(query):
     return '{}'
 
 
+def performing_delivering(query):
+    position_grid = PositionGrid()
+    pose = eval(query.parameters[3])
+    object_type = _cram_to_word_net_object_[query.parameters[1]]
+    transformation_matrix = utils.get_transform_matrix(pose[2], pose[3])
+    _, bottom_face = utils.calculate_object_faces(transformation_matrix)
+
+    arm = fetching_solutions[ARM]
+    grasping_result = fetching_solutions[GRASPING_TYPE]
+    robot_faces = utils.get_possible_robot_faces(bottom_face)
+
+    for robot_face in robot_faces:
+        position_grid.add_evidences(object_type, grasping_result, robot_face, bottom_face, arm)
+
+    global best_position_grid
+    best_position_grid = position_grid
+
+    return '{}'
+
+
 def performing_fetching(query):
     position_grid = PositionGrid()
     pose = eval(query.parameters[3])
     arm = query.parameters[-1]
+    fetching_solutions[ARM] = arm
     object_type = _cram_to_word_net_object_[query.parameters[1]]
 
     transformation_matrix = utils.get_transform_matrix(pose[2], pose[3])
@@ -68,7 +95,7 @@ def performing_fetching(query):
         grasping_result = grasping_results[0]
         position_grid.add_evidences(object_type, grasping_result, robot_face, bottom_face, arm)
 
-    global best_position_grid
+    global best_position_grid, fetching_solutions
     best_position_grid = position_grid
 
     return '{}'
@@ -98,6 +125,8 @@ def object_type_grasps(query):
     grasping_result = best_grasping_types[predictor_index]
 
     grasping_result = map(lambda grasp: grasp.lower(), grasping_result)
+    global fetching_solutions
+    fetching_solutions[GRASPING_TYPE] = grasping_result[0]
     result = "{{\"{}\":{}}}".format(query.parameters[-1], grasping_result)
 
     return result.replace("'", '"')
