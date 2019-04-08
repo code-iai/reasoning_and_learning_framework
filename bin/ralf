@@ -1,33 +1,38 @@
 #! /usr/bin/env python
-import rosservice
 import rospy
-from reasoning_and_learning_framework_msgs.srv import *
+import rosservice
 from json_prolog_msgs.srv import *
 
 from query.query import Query
 from ralf import ralf
 
-SERVICE_NAME_QUERY_ID = 'json_prolog/simple_query'
-SERVICE_NAME_SOLUTION = 'json_prolog/next_solution'
+SERVICE_NAME_SIMPLE_QUERY_ID = 'ralf/simple_query'
+SERVICE_NAME_SOLUTION = 'ralf/next_solution'
+SERVICE_NAME_FINISH = 'ralf/finish'
 NODE_NAME = 'ralf'
 
 service_query_id = None
 service_query_solution = None
+service_query_finish = None
 
 queries = {}
+
+rosservice.get_service_list()
 
 
 def call_service_query_id(req):
     query = Query(req.id, req.mode, req.query)
     queries[query.id] = query
 
+    print query._query_text
+
     # The MLN inference causes that the service dies sometimes without throwing an exception.
     # However until the real cause will be found out, a reboot of the service fixes it.
     if __is_service_running__():
         try:
             __start_service__()
-        except:
-            print''
+        except Exception as inst:
+            print inst
 
     return PrologQueryResponse(True, '')
 
@@ -36,29 +41,46 @@ def call_service_query_solution(req):
     query = queries.get(req.id, None)
 
     answer = ralf.answer_query(query)
-
+    #print answerP
     # The MLN inference causes that the service dies sometimes without throwing an exception.
     # However until the real cause will be found out, a reboot of the service fixes it.
     if __is_service_running__():
         try:
             __start_service__()
-        except:
-            print''
+        except Exception as inst:
+            print inst
 
     return PrologNextSolutionResponse(3, answer)
 
 
+def call_service_query_finish(req):
+    if __is_service_running__():
+        try:
+            __start_service__()
+        except Exception as inst:
+            print inst
+    return PrologQueryResponse()
+
+
 def __is_service_running__():
-    return '/{}'.format(SERVICE_NAME_QUERY_ID) not in rosservice.get_service_list() \
-           or '/{}'.format(SERVICE_NAME_SOLUTION) not in rosservice.get_service_list()
+    return '/{}'.format(SERVICE_NAME_SIMPLE_QUERY_ID) not in rosservice.get_service_list() \
+           or '/{}'.format(SERVICE_NAME_SOLUTION) not in rosservice.get_service_list() \
+           or '/{}'.format(SERVICE_NAME_FINISH) not in rosservice.get_service_list()
 
 
 def __start_service__():
-    global service_query_id
-    service_query_id = rospy.Service(SERVICE_NAME_QUERY_ID, PrologQuery, call_service_query_id)
+    print 'Starting services ..'
+    if '/{}'.format(SERVICE_NAME_SIMPLE_QUERY_ID) not in rosservice.get_service_list():
+        global service_query_id
+        service_query_id = rospy.Service(SERVICE_NAME_SIMPLE_QUERY_ID, PrologQuery, call_service_query_id)
 
-    global service_query_solution
-    service_query_id = rospy.Service(SERVICE_NAME_SOLUTION, PrologNextSolution, call_service_query_solution)
+    if '/{}'.format(SERVICE_NAME_SOLUTION) not in rosservice.get_service_list():
+        global service_query_solution
+        service_query_id = rospy.Service(SERVICE_NAME_SOLUTION, PrologNextSolution, call_service_query_solution)
+
+    if '/{}'.format(SERVICE_NAME_FINISH) not in rosservice.get_service_list():
+        global service_query_finish
+        service_query_finish = rospy.Service(SERVICE_NAME_FINISH, PrologFinish, call_service_query_finish)
 
 
 def start_ralf_server():

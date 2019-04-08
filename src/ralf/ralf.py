@@ -64,8 +64,17 @@ def performing_delivering(query):
     grasping_result = fetching_solutions[GRASPING_TYPE]
     robot_faces = utils.get_possible_robot_faces(bottom_face)
 
+    print 'DELIVERING'
+    print 'Pose:{}'.format(pose)
+    print 'Arm:{}'.format(arm)
+    print 'Grasping Result:{}'.format(':'+grasping_result.upper())
+    print 'Robot Faces:{}'.format(robot_faces)
+    print 'Object Type:{}'.format(object_type)
+    print 'Bottom face:{}'.format(bottom_face)
+    print 'END DELIVERING'
+
     for robot_face in robot_faces:
-        position_grid.add_evidences(object_type, grasping_result, robot_face, bottom_face, arm)
+        position_grid.add_evidences(object_type, grasping_result.upper(), robot_face, bottom_face, arm)
 
     global best_position_grid
     best_position_grid = position_grid
@@ -93,9 +102,18 @@ def performing_fetching(query):
         best_grasping_types.append(grasping_results)
 
         grasping_result = grasping_results[0]
+
+        print 'FETCHING'
+        print 'Pose:{}'.format(pose)
+        print 'Arm:{}'.format(arm)
+        print 'Grasping Result:{}'.format(grasping_result)
+        print 'Robot Faces:{}'.format(robot_faces)
+        print 'Object Type:{}'.format(object_type)
+        print 'Bottom face:{}'.format(bottom_face)
+        print 'END FETCHING'
         position_grid.add_evidences(object_type, grasping_result, robot_face, bottom_face, arm)
 
-    global best_position_grid, fetching_solutions
+    global best_position_grid
     best_position_grid = position_grid
 
     return '{}'
