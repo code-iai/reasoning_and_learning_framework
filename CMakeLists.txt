@@ -7,7 +7,7 @@ project(reasoning_and_learning_framework)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED)
+find_package(catkin REQUIRED COMPONENTS actionlib_msgs)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -56,18 +56,14 @@ catkin_python_setup()
 #   Service2.srv
 # )
 
-## Generate actions in the 'action' folder
-# add_action_files(
-#   FILES
-#   Action1.action
-#   Action2.action
-# )
+add_action_files(
+  DIRECTORY action
+  FILES Ralf.action
+)
 
-## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs  # Or other packages containing msgs
-# )
+generate_messages(
+  DEPENDENCIES actionlib_msgs std_msgs  # Or other packages containing msgs
+)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -99,6 +95,7 @@ catkin_python_setup()
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
+CATKIN_DEPENDS actionlib_msgs
 #  INCLUDE_DIRS include
 #  LIBRARIES reasoning_and_learning_framework
 #  CATKIN_DEPENDS message_generation rospy
@@ -130,6 +127,31 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/reasoning_and_learning_framework_node.cpp)
+
+#add_executable(reasoning_and_learning_framework src/ralf/ralf.py)
+
+#target_link_libraries(
+#  reasoning_and_learning_framework
+#  ${catkin_LIBRARIES}
+#)
+
+#add_dependencies(
+#  reasoning_and_learning_framework
+#  ${reasoning_and_learning_framework_EXPORTED_TARGETS}
+#)
+
+
+#add_executable(reasoning_and_learning_framework src/ralf/ralf_client.py)
+
+#target_link_libraries( 
+ # ralf_client
+  #${catkin_LIBRARIES}
+#)
+
+#add_dependencies(
+ # ralf_client
+  #${reasoning_and_learning_framework_EXPORTED_TARGETS}
+#)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
