@@ -1,0 +1,10 @@
+#goal definition
+string service_query_id
+string service_query_solution
+string service_query_finish
+---
+#result definition
+string final_result  
+---
+#feedback
+bool running_status
