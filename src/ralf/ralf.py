@@ -21,6 +21,7 @@
 from grasping import type as grasping_type, utils
 from grasping.position import PositionGrid
 from grasping.utils import get_object_robot_translation
+import subprocess
 
 _cram_to_word_net_object_ = {'bowl':'bowl.n.01', 'cup': 'cup.n.01', 'spoon': 'spoon.n.01'}
 
@@ -96,9 +97,12 @@ def performing_fetching(query):
     robot_faces = utils.get_possible_robot_faces(bottom_face)
 
     for robot_face in robot_faces:
-        grasping_results = grasping_type.get_storted_list_of_grasping_types_based_on_probability(
-            robot_face, bottom_face, object_type)
 
+        #grasping_results = grasping_type.get_storted_list_of_grasping_types_based_on_probability(
+        #    robot_face, bottom_face, object_type)
+        print subprocess.check_output(['python', '/home/koralewski/catkin_ws/ros_cram/src/learning/reasoning_and_learning_framework/src/ralf/hack.py', robot_face, bottom_face, object_type])
+        grasping_results = ['FRONT', 'TOP', 'LEFT-SIDE', 'RIGHT-SIDE', 'BACK']
+        print grasping_results
         best_grasping_types.append(grasping_results)
 
         grasping_result = grasping_results[0]

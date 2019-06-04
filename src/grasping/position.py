@@ -23,7 +23,7 @@ from grasping_position_inference.inference.model import Model
 
 class PositionGrid(object):
     def __init__(self):
-        self._model = Model()
+        self._model = Model('/home/koralewski/workspace/Learning/auto_learner_docker/models')
 
     def add_evidences(self, *evidences):
         object_type, grasping_type, robot_face, bottom_face, arm = evidences

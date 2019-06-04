@@ -1,6 +1,7 @@
 import tf.transformations as tf
 import numpy as np
 
+
 def calculate_object_faces(robot_to_object_transform):
     object_to_robot_transform = tf.inverse_matrix(robot_to_object_transform)
 
