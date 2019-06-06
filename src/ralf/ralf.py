@@ -18,15 +18,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from grasping import type as grasping_type, utils
+from grasping import utils
 from grasping.position import PositionGrid
 from grasping.utils import get_object_robot_translation
 import subprocess
 import os
 import sys
-
-_cram_to_word_net_object_ = {'bowl':'bowl.n.01', 'cup': 'cup.n.01', 'spoon': 'spoon.n.01'}
-
+import cram2wordnet.cram2wordnet as cram2wordnet
 
 ARM = 'ARM'
 GRASPING_TYPE = 'GRASPING_TYPE'
@@ -59,7 +57,7 @@ def answer_query(query):
 def performing_delivering(query):
     position_grid = PositionGrid()
     pose = eval(query.parameters[3])
-    object_type = _cram_to_word_net_object_[query.parameters[1]]
+    object_type = cram2wordnet.map_cram_object_type_to_word_net_instance(query.parameters[1])
     transformation_matrix = utils.get_transform_matrix(pose[2], pose[3])
     _, bottom_face = utils.calculate_object_faces(transformation_matrix)
 
@@ -90,7 +88,7 @@ def performing_fetching(query):
     pose = eval(query.parameters[3])
     arm = query.parameters[-1]
     fetching_solutions[ARM] = arm
-    object_type = _cram_to_word_net_object_[query.parameters[1]]
+    object_type = cram2wordnet.map_cram_object_type_to_word_net_instance(query.parameters[1])
 
     transformation_matrix = utils.get_transform_matrix(pose[2], pose[3])
 
