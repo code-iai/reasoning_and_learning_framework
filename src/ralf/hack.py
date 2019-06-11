@@ -1,5 +1,6 @@
-from grasping_type_inference.inference import Inference
 from grasping_type_inference.grasping_type_mln import set_mln_path
+from grasping_type_inference.inference import Inference
+
 import sys
 
 if __name__ == "__main__":
