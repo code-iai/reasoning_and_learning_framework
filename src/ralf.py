@@ -116,13 +116,10 @@ def __start_service__():
 
 
 def start_ralf_server():
-    #global server
-    #rospy.init_node('ralf')
-    #server = RalfAction(rospy.get_name())
-
+    print 'Starting node ...'
     rospy.init_node(NODE_NAME)
     __start_service__()
-    print"Waiting for questions"
+    print"Waiting for questions ..."
     rospy.spin()
 
 
