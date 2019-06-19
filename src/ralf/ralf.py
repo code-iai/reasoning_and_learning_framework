@@ -84,6 +84,9 @@ def performing_delivering(query):
 
 
 def performing_fetching(query):
+    global best_grasping_types
+    best_grasping_types = []
+
     position_grid = PositionGrid()
     pose = eval(query.parameters[3])
     arm = query.parameters[-1]
@@ -100,7 +103,9 @@ def performing_fetching(query):
         #grasping_results = grasping_type.get_storted_list_of_grasping_types_based_on_probability(
         #    robot_face, bottom_face, object_type)
         path_to_prac_script = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'hack.py')
-        grasping_results = eval(subprocess.check_output(['python', path_to_prac_script , robot_face, bottom_face, object_type, sys.argv[1]]))
+        mln_path = sys.argv[1]
+        grasping_list = subprocess.check_output(['python', path_to_prac_script, robot_face, bottom_face, object_type, mln_path])
+        grasping_results = eval(grasping_list)
 
         best_grasping_types.append(grasping_results)
 
