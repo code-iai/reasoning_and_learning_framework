@@ -17,6 +17,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+from collections import defaultdict
 
 from grasping import utils
 from grasping.position import PositionGrid
@@ -31,7 +32,7 @@ GRASPING_TYPE = 'GRASPING_TYPE'
 
 best_grasping_types = []
 best_position_grid = PositionGrid()
-fetching_solutions = {}
+fetching_solutions = defaultdict(dict)
 
 
 def answer_query(query):
@@ -61,8 +62,8 @@ def performing_delivering(query):
     transformation_matrix = utils.get_transform_matrix(pose[2], pose[3])
     _, bottom_face = utils.calculate_object_faces(transformation_matrix)
 
-    arm = fetching_solutions[ARM]
-    grasping_result = fetching_solutions[GRASPING_TYPE]
+    arm = fetching_solutions[object_type][ARM]
+    grasping_result = fetching_solutions[object_type][GRASPING_TYPE]
     robot_faces = utils.get_possible_robot_faces(bottom_face)
 
     print 'DELIVERING'
@@ -90,8 +91,8 @@ def performing_fetching(query):
     position_grid = PositionGrid()
     pose = eval(query.parameters[3])
     arm = query.parameters[-1]
-    fetching_solutions[ARM] = arm
     object_type = cram2wordnet.map_cram_object_type_to_word_net_instance(query.parameters[1])
+    fetching_solutions[object_type][ARM] = arm
 
     transformation_matrix = utils.get_transform_matrix(pose[2], pose[3])
 
@@ -142,6 +143,7 @@ def _get_costmap_as_text():
 
 
 def object_type_grasps(query):
+    object_type = cram2wordnet.map_cram_object_type_to_word_net_instance(query.parameters[0])
     pose = eval(query.parameters[2])
     object_robot_translation = get_object_robot_translation(pose[2], pose[3])
     x = object_robot_translation[0]
@@ -152,7 +154,7 @@ def object_type_grasps(query):
 
     grasping_result = map(lambda grasp: grasp.lower(), grasping_result)
     global fetching_solutions
-    fetching_solutions[GRASPING_TYPE] = grasping_result[0]
+    fetching_solutions[object_type][GRASPING_TYPE] = grasping_result[0]
     result = "{{\"{}\":{}}}".format(query.parameters[-1], grasping_result)
 
     return result.replace("'", '"')
